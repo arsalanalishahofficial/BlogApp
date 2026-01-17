@@ -33,6 +33,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
   FocusNode titlefocusNode = FocusNode();
   FocusNode descriptionFocusNode = FocusNode();
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -120,44 +122,56 @@ class _AddPostScreenState extends State<AddPostScreen> {
   }
 
   Future<void> _submit() async {
-    setState(() {
-      showSpinner = true;
-    });
+    if (!_formKey.currentState!.validate()) return;
 
-    try {
-      int date = DateTime.now().millisecondsSinceEpoch;
-      // firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
-      //     .ref('/blogapp$date');
-      // firebase_storage.UploadTask uploadTask = ref.putFile(_image!.absolute);
-
-      // await Future.value(uploadTask);
-
-      // var url = await ref.getDownloadURL();
-      final User? user = _auth.currentUser;
-
-      await postRef
-          .child("Post List")
-          .child(date.toString())
-          .set({
-            'pId': date.toString(),
-            // 'pImage' : url,
-            'pTime': date.toString(),
-            'pTitle': titleController.text.toString(),
-            'pDescription': descriptionController.text.toString(),
-            'pEmail': user!.email.toString(),
-            'pUid': user.uid.toString(),
-          })
-          .onError((error, stackTrace) {
-            showToast(error.toString());
-          });
-
-      showToast("Blog Published");
-    } catch (e) {
-      showToast(e.toString());
-    } finally {
+    if (titleController.text.isNotEmpty &&
+        descriptionController.text.isNotEmpty &&
+        _image != null) {
       setState(() {
-        showSpinner = false;
+        showSpinner = true;
       });
+
+      try {
+        int date = DateTime.now().millisecondsSinceEpoch;
+        // firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+        //     .ref('/blogapp$date');
+        // firebase_storage.UploadTask uploadTask = ref.putFile(_image!.absolute);
+
+        // await Future.value(uploadTask);
+
+        // var url = await ref.getDownloadURL();
+        final User? user = _auth.currentUser;
+
+        await postRef
+            .child("Post List")
+            .child(date.toString())
+            .set({
+              'pId': date.toString(),
+              // 'pImage' : url,
+              'pTime': date.toString(),
+              'pTitle': titleController.text.toString(),
+              'pDescription': descriptionController.text.toString(),
+              'pEmail': user!.email.toString(),
+              'pUid': user.uid.toString(),
+            })
+            .onError((error, stackTrace) {
+              showToast(error.toString());
+            });
+
+        showToast("Blog Published");
+      } catch (e) {
+        showToast(e.toString());
+      } finally {
+        setState(() {
+          showSpinner = false;
+          _image = null;
+        });
+
+        titleController.clear();
+        descriptionController.clear();
+      }
+    } else {
+      showToast("please select Image");
     }
   }
 
@@ -211,6 +225,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
                 SizedBox(height: 30),
                 Form(
+                  key: _formKey,
                   child: Column(
                     children: [
                       TextFormField(
@@ -228,6 +243,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           hintStyle: hintStyle(),
                           labelStyle: labelStyle(),
                         ),
+
+                        validator: (value) =>
+                            value!.isEmpty ? "Enter title" : null,
                       ),
                       SizedBox(height: 10),
                       TextFormField(
@@ -245,6 +263,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           alignLabelWithHint: true,
                         ),
                         maxLines: 5,
+
+                        validator: (value) =>
+                            value!.isEmpty ? "Enter description" : null,
                       ),
                       SizedBox(height: 10),
                       Roundedbutton(title: 'Upload', onPress: _submit),
