@@ -142,6 +142,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
         // var url = await ref.getDownloadURL();
         final User? user = _auth.currentUser;
 
+        if(user == null){
+          showToast("User Not login");
+          setState(() {
+            showSpinner = false;
+            return;
+          });
+        }
+
         await postRef
             .child("Post List")
             .child(date.toString())

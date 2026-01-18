@@ -16,6 +16,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final dbRef = FirebaseDatabase.instance.ref().child("Posts");
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  TextEditingController searchController = TextEditingController();
+  String search = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +52,19 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.all(10),
           child: Column(
             children: [
+              TextFormField(
+                controller: searchController,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  hintText: "Search",
+                  labelText: "Search",
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  search = value;
+                },
+              ),
               Expanded(
                 child: FirebaseAnimatedList(
                   query: dbRef.child("Post List"),
