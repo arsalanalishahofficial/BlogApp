@@ -110,6 +110,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 Form(
                   key: _formKey,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       TextFormField(
                         controller: emailController,
@@ -182,7 +183,17 @@ class _SignInScreenState extends State<SignInScreen> {
                             ? "Password must be at least 8 characters"
                             : null,
                       ),
-
+                      SizedBox(height: 5),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, RouteName.forgetPasswordScreen);
+                        },
+                        child: Text(
+                          "Forget Password?",
+                          style: TextStyle(color: Colors.blue[900]),
+                        ),
+                      ),
+                      SizedBox(height: 30),
                       Roundedbutton(title: "SignIn", onPress: _submit),
                     ],
                   ),

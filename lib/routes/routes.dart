@@ -1,5 +1,6 @@
 import 'package:blogapp/routes/name_routes.dart';
 import 'package:blogapp/screens/addPost.dart';
+import 'package:blogapp/screens/forgetpassword.dart';
 import 'package:blogapp/screens/home.dart';
 import 'package:blogapp/screens/optionScreen.dart';
 import 'package:blogapp/screens/signin.dart';
@@ -19,6 +20,8 @@ class Routes {
         return MaterialPageRoute(builder: (_) => Optionscreen());
       case RouteName.AddPostScreen:
         return MaterialPageRoute(builder: (_) => AddPostScreen());
+      case RouteName.forgetPasswordScreen:
+        return MaterialPageRoute(builder: (_) => ForgetpasswordScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>
