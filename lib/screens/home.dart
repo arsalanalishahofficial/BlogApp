@@ -26,7 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text("New Blogs"),
         centerTitle: true,
         actions: [
-         
           InkWell(
             onTap: () {
               Navigator.pushNamed(context, RouteName.AddPostScreen);
@@ -35,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(width: 20),
 
-           InkWell(
+          InkWell(
             onTap: () {
               _auth.signOut().then((value) {
                 Navigator.pushNamed(context, RouteName.signinScreen);
@@ -44,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Icon(Icons.logout),
           ),
 
-          SizedBox(width: 20,)
+          SizedBox(width: 20),
         ],
       ),
       body: SafeArea(
@@ -56,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 controller: searchController,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
-                  hintText: "Search",
+                  hintText: "Search with blog title",
                   labelText: "Search",
                   prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(),
@@ -71,7 +70,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemBuilder: (context, snapshot, animation, index) {
                     final data = snapshot.value as Map?;
                     if (data!.isNotEmpty) {
-                      return PostCard(data: data);
+                      String tempTitle = data['title'].toString();
+                      if (searchController.text.toString().isEmpty) {
+                        return PostCard(data: data);
+                      }
+                      else if(tempTitle.toLowerCase().contains(searchController.text.toString())){
+                        return PostCard(data: data);
+                      }
+                      else{
+                        return Container();
+                      }
                     } else {
                       return SizedBox();
                     }
