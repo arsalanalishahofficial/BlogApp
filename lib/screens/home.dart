@@ -1,4 +1,5 @@
 import 'package:blogapp/routes/name_routes.dart';
+import 'package:blogapp/utils/toast.dart';
 import 'package:blogapp/widgets/post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -61,7 +62,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (value) {
-                  search = value;
+                  setState(() {
+                    search = value.trim();
+                  });
                 },
               ),
               Expanded(
@@ -69,19 +72,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   query: dbRef.child("Post List"),
                   itemBuilder: (context, snapshot, animation, index) {
                     final data = snapshot.value as Map?;
-                    if (data!.isNotEmpty) {
-                      String tempTitle = data['title'].toString();
-                      if (searchController.text.toString().isEmpty) {
-                        return PostCard(data: data);
-                      }
-                      else if(tempTitle.toLowerCase().contains(searchController.text.toString())){
-                        return PostCard(data: data);
-                      }
-                      else{
-                        return Container();
-                      }
+
+                    if (data == null || data.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
+                    String tempTitle = data['pTitle'].toString();
+
+                    if (search.isEmpty) {
+                      return PostCard(data: data);
+                    } else if (tempTitle.toLowerCase().contains(
+                      search.toLowerCase(),
+                    )) {
+                      return PostCard(data: data);
                     } else {
-                      return SizedBox();
+                      return const SizedBox.shrink();
                     }
                   },
                 ),
